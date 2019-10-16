@@ -8,7 +8,6 @@ from .user_profile import UserProfile
 
 class DataProvider:
     def __init__(self):
-        services._init_db_connection()
         services._init_services()
 
         self.__user_name = 'default'
@@ -32,6 +31,20 @@ class DataProvider:
             provider = EntityProvider(type_def)
         return provider
 
+    def _get_services(self):
+        return {
+            'ontology': services.ontology,
+            'reports' : services.reports,
+            'indexdef': services.indexdef,
+            'arango_service': services.arango_service
+        }
+    def _get_constants(self):
+        return {
+            '_BRICK_TYPE_TEMPLATES_FILE' : services._BRICK_TYPE_TEMPLATES_FILE,
+            '_WEB_SERVICE': services._WEB_SERVICE,
+            '_PLOT_TYPES_FILE': services._PLOT_TYPES_FILE
+        }
+
 class GenericsProvider:
     def __init__(self):
         self.__load_providers()
@@ -46,6 +59,9 @@ class GenericsProvider:
 class EntitiesProvider:
     def __init__(self):
         self.__load_entity_providers()
+
+    def __getitem__(self, core_type):
+        return self.__dict__[core_type]
 
     def __load_entity_providers(self):
         index_type_defs = services.indexdef.get_type_defs(category=TYPE_CATEGORY_STATIC)
@@ -101,3 +117,13 @@ class BrickProvider(EntityProvider):
 
     def load(self, brick_id):
         return BrickProvider._load_brick(brick_id)
+
+    def type_names(self):
+        names = []
+        itype_def = services.indexdef.get_type_def(TYPE_NAME_BRICK)        
+        term_counts = services.ontology.term_stat( itype_def, 'data_type')        
+        for term_count in term_counts:
+            term = term_count[0]
+            names.append(term.term_name)
+        names.sort()
+        return names

@@ -2,6 +2,15 @@ import os
 import json
 
 from pyArango.connection import Connection
+# from . import ontology as ontology_mudule
+# from . import validator as validator_module
+# from . import workspace as workspace_module
+# from . import typedef as typedef_module
+# from . import indexdef as indexdef_module
+# from . import arango_service as arango_service_module
+# from . import report as report_module
+
+
 from .ontology import OntologyService, CashedTermProvider
 from .validator import TermValueValidationService
 from .workspace import Workspace
@@ -27,6 +36,8 @@ __TYPEDEF_FILE = os.path.join(__PACKAGE_DIR, 'var/typedef.json')
 _BRICK_TYPE_TEMPLATES_FILE = os.path.join(__PACKAGE_DIR, 'var/brick_type_templates.json')
 _UPLOAD_CONFIG_FILE = os.path.join(__PACKAGE_DIR, 'var/upload_config.json')
 
+_WEB_SERVICE = __CONFIG['WebService']
+_PLOT_TYPES_FILE = os.path.join(__PACKAGE_DIR, 'var/' + _WEB_SERVICE['plot_types_file'])
 
 arango_service = None
 
@@ -36,7 +47,6 @@ def _init_db_connection():
 
     global arango_service
     arango_service = ArangoService(__arango_conn, __arango_config['db'])
-
 
 
 ontology = None
